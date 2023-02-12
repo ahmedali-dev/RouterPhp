@@ -1,5 +1,4 @@
-# RouterPhp
-
+![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9ZJeGD2uuMbMmou--uIsn_lohzt4ZlOmovQ&usqp=CAU)
 # how to use Router
 ```php
 // controller classes
@@ -27,3 +26,5 @@ echo $data['id'] . " :name= " . $data['name'];
 Route::$NotFoundFun = 'notfoundpage1';
 Route::$NotFoundClass = '404';
 ```
+
+[]
