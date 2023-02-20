@@ -105,10 +105,10 @@ class Route
                 }
 
             }
-            
+
             if (is_callable($route['controller'])) {
-                $route['controller']($params);
-                call_user_func($route, array_values(...$params));
+//                $route['controller']($params);
+                call_user_func_array($route['controller'], [...array_values($params)]);
             } else {
                 $controller = explode('@', $route['controller']);
                 $controller_class = $controller[0];
