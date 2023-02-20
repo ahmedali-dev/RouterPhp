@@ -23,7 +23,6 @@ class Route
     public static string $NotFoundFun = 'index';
 
 
-
     /**
      * ! @param string $path => url path http://site.com/home
      * ! @param callable|string $con => class required
@@ -74,7 +73,8 @@ class Route
 
     private static function AddRoute(string $method, string $path, string|callable $con): void
     {
-        self::$routes[strtolower($path)] = array(
+        self::$routes[] = array(
+            'path' => strtolower($path),
             'method' => $method,
             'controller' => $con
         );
@@ -84,36 +84,33 @@ class Route
     {
 
         $url_parts = explode("/", substr(strtolower(self::getRequestPath()), 1));
-        foreach (self::$routes as $route => $value) {
+        foreach (self::$routes as $route) {
             $params = [];
-//            echo $route . "<br>";
-            $path_parts = explode('/', substr($route, 1));
+
+            $path_parts = explode('/', substr($route['path'], 1));
 
             if (count($path_parts) !== count($url_parts)) {
                 continue;
             }
 
-            if (self::GetMethod() !== $value['method']) {
+            if (self::GetMethod() !== $route['method']) {
                 continue;
             }
 
             foreach ($path_parts as $idx => $val) {
-
                 if (strpos($val, '{') === 0) {
                     $params[substr($val, 1, -1)] = $url_parts[$idx];
-                }else if ($val !== $url_parts[$idx]) {
+                } else if ($val !== $url_parts[$idx]) {
                     continue 2;
                 }
 
             }
-
-//            echo $route;
-//            echo "<br>".$value['controller'];
-
-            if (is_callable($value['controller'])) {
-                $value['controller']($params);
-            }else {
-                $controller = explode('@', $value['controller']);
+            
+            if (is_callable($route['controller'])) {
+                $route['controller']($params);
+                call_user_func($route, array_values(...$params));
+            } else {
+                $controller = explode('@', $route['controller']);
                 $controller_class = $controller[0];
                 $controller_fun = $controller[1];
                 call_user_func_array(array(new $controller_class, $controller_fun), array(...array_values($params)));
@@ -157,7 +154,6 @@ class Route
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
-
 
 
     public static function print($r): void
